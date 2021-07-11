@@ -810,6 +810,7 @@ async function StartDailyLotteryNewVersion(cookie, encryptMobile, cityCode, lott
         // 旧版抽奖
         // let [errLottery, [lotteryCount, lotteryResult] = []] = await magicJS.attempt(StartDailyLottery(cookie, encryptMobile));
         // if (errLottery) magicJS.logError("旧版抽奖出现异常：" + errLottery);
+        let lotteryCount = 3; // test only
         // 新版抽奖
         let [errLotteryNewVersion, [lotteryNewVersionCount, lotteryNewVersionResult] = []] = await magicJS.attempt(StartDailyLotteryNewVersion(cookie, encryptMobile, cityCode, lotteryCount));
         if (errLotteryNewVersion) magicJS.logError("新版抽奖出现异常：" + errLotteryNewVersion);
