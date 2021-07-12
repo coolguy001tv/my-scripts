@@ -39,8 +39,8 @@ function CheckIn(cookie){
             resolve(['🎉今日已签到过了，不要重复签到哦！！', null, null])
           }
           else if (obj.code === 0){
-            magicJS.logInfo(`签到成功，获得红包${obj.data.amount}，优惠券${obj.data.couponInfo.couponDesc.nameDesc}!`)
-            resolve(['🎉签到成功', obj.data.amount, obj.data.couponInfo.couponDesc.nameDesc]);
+            magicJS.logInfo(`签到成功，获得红包${obj.data.amount}，优惠券${obj.data?.couponInfo?.couponDesc?.nameDesc}!`)
+            resolve(['🎉签到成功', obj.data?.amount, obj.data?.couponInfo?.couponDesc?.nameDesc]);
           }
           else if (obj.code === 401){
             resolve(['❌签到失败，Cookie已过期', null, null]);
