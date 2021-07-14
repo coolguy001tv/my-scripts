@@ -119,14 +119,10 @@ function nobyda() {
     const isSurge = typeof $httpClient != "undefined"
     const isQuanX = typeof $task != "undefined"
     const node = (() => {
-        if (isNode) {
-            const request = require('request');
-            return ({
-                request
-            })
-        } else {
-            return (null)
-        }
+        const request = require('request');
+        return ({
+            request
+        })
     })()
     const notify = (title, subtitle, message) => {
         if (isQuanX) $notify(title, subtitle, message)
