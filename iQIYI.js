@@ -70,7 +70,7 @@ var $nobyda = nobyda();
 (async () => {
   out = $nobyda.read("iQIYI_TimeOut") || out
   cookie = cookie || $nobyda.read("CookieQY") || process.env.CookieQY;
-  console.log('Cookie is', cookie);
+  //console.log('Cookie is', cookie);
   LogDetails = $nobyda.read("iQIYI_LogDetails") === "true" ? true : LogDetails
   if ($nobyda.isRequest) {
     GetCookie()
@@ -89,13 +89,14 @@ var $nobyda = nobyda();
 function login() {
   return new Promise(resolve => {
     var URL = {
-      url: 'https://cards.iqiyi.com/views_category/3.0/vip_home?secure_p=iPhone&scrn_scale=0&dev_os=0&ouid=0&layout_v=6&psp_cki=' + cookie + '&page_st=suggest&app_k=8e48946f144759d86a50075555fd5862&dev_ua=iPhone8%2C2&net_sts=1&cupid_uid=0&xas=1&init_type=6&app_v=11.4.5&idfa=0&app_t=0&platform_id=0&layout_name=0&req_sn=0&api_v=0&psp_status=0&psp_uid=451953037415627&qyid=0&secure_v=0&req_times=0',
+      url: 'https://cards.iqiyi.com/views_category/3.0/vip_home?secure_p=iPhone&scrn_scale=0&dev_os=0&ouid=0&layout_v=6&psp_cki=' + encodeURIComponent(cookie)  + '&page_st=suggest&app_k=8e48946f144759d86a50075555fd5862&dev_ua=iPhone8%2C2&net_sts=1&cupid_uid=0&xas=1&init_type=6&app_v=11.4.5&idfa=0&app_t=0&platform_id=0&layout_name=0&req_sn=0&api_v=0&psp_status=0&psp_uid=451953037415627&qyid=0&secure_v=0&req_times=0',
       headers: {
         sign: '7fd8aadd90f4cfc99a858a4b087bcc3a',
         t: '479112291'
       }
     }
     $nobyda.get(URL, function(error, response, data) {
+      console.log('response', error,'---------\n', data,'---------\n', response);
       const Details = LogDetails ? data ? `response:\n${data}` : '' : ''
       if (!error && data.match(/\"text\":\"\d.+?\u5230\u671f\"/)) {
         $nobyda.expire = data.match(/\"text\":\"(\d.+?\u5230\u671f)\"/)[1]
