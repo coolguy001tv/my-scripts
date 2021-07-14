@@ -129,13 +129,9 @@ function nobyda() {
         if (isSurge) $notification.post(title, subtitle, message)
     }
     const write = (value, key) => {
-        if (isQuanX) return $prefs.setValueForKey(value, key)
-        if (isSurge) return $persistentStore.write(value, key)
         return process.env[key];
     }
     const read = (key) => {
-        if (isQuanX) return $prefs.valueForKey(key)
-        if (isSurge) return $persistentStore.read(key)
         return process.env[key];
     }
     const adapterStatus = (response) => {
