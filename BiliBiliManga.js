@@ -49,7 +49,7 @@ if ($nobyda.isRequest) {
 
 function checkin() {
     const cookie = $nobyda.read(CookieKey);
-    console.log(cookie);
+    // console.log(cookie);
   const bilibili = {
     url: 'https://manga.bilibili.com/twirp/activity.v1.Activity/ClockIn',
     headers: {
@@ -118,6 +118,16 @@ function nobyda() {
     const isRequest = typeof $request != "undefined"
     const isSurge = typeof $httpClient != "undefined"
     const isQuanX = typeof $task != "undefined"
+    const node = (() => {
+        if (isNode) {
+            const request = require('request');
+            return ({
+                request
+            })
+        } else {
+            return (null)
+        }
+    })()
     const notify = (title, subtitle, message) => {
         if (isQuanX) $notify(title, subtitle, message)
         if (isSurge) $notification.post(title, subtitle, message)
@@ -132,16 +142,20 @@ function nobyda() {
         if (isSurge) return $persistentStore.read(key)
         return process.env[key];
     }
-    const post = (options, callback) => {
-        if (isQuanX) {
-            if (typeof options == "string") options = { url: options }
-            options["method"] = "POST"
-            $task.fetch(options).then(response => {
+    const adapterStatus = (response) => {
+        if (response) {
+            if (response.status) {
+                response["statusCode"] = response.status
+            } else if (response.statusCode) {
                 response["status"] = response.statusCode
-                callback(null, response, response.body)
-            }, reason => callback(reason.error, null, null))
+            }
         }
-        if (isSurge) $httpClient.post(options, callback)
+        return response
+    }
+    const post = (options, callback) => {
+        node.request.post(options, (error, response, body) => {
+            callback(error, adapterStatus(response), body)
+        })
     }
     const end = () => {
         if (isQuanX) return $done({})
