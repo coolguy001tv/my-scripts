@@ -48,14 +48,17 @@ if ($nobyda.isRequest) {
 }
 
 function checkin() {
+    const cookie = $nobyda.read(CookieKey);
+    console.log(cookie);
   const bilibili = {
     url: 'https://manga.bilibili.com/twirp/activity.v1.Activity/ClockIn',
     headers: {
-      Cookie: $nobyda.read(CookieKey),
+      Cookie: cookie,
     },
     body: "platform=ios"
   };
   $nobyda.post(bilibili, function(error, response, data) {
+      console.log('data', error, response, data);
     if (!error) {
       if (parseInt(response.status) == 200) {
         console.log("bilibili success response : \n" + data)
