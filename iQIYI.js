@@ -96,7 +96,6 @@ function login() {
       }
     }
     $nobyda.get(URL, function(error, response, data) {
-      console.log('response', error,'---------\n', data,'---------\n', response);
       const Details = LogDetails ? data ? `response:\n${data}` : '' : ''
       if (!error && data.match(/\"text\":\"\d.+?\u5230\u671f\"/)) {
         $nobyda.expire = data.match(/\"text\":\"(\d.+?\u5230\u671f)\"/)[1]
@@ -113,7 +112,7 @@ function login() {
 function Checkin() {
   return new Promise(resolve => {
     var URL = {
-      url: 'https://tc.vip.iqiyi.com/taskCenter/task/queryUserTask?autoSign=yes&P00001=' + cookie
+      url: 'https://tc.vip.iqiyi.com/taskCenter/task/queryUserTask?autoSign=yes&P00001=' + encodeURIComponent(cookie)
     }
     $nobyda.get(URL, function(error, response, data) {
       if (error) {
