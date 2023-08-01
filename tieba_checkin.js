@@ -12,6 +12,9 @@ const tiebeNewVersionGetCookieRegex = /^https?:\/\/c\.tieba\.baidu\.com\/c\/s\/c
 let magicJS = MagicJS(scirptName, "INFO");
 magicJS.unifiedPushUrl = magicJS.read("tieba_unified_push_url") || magicJS.read("magicjs_unified_push_url");
 
+
+magicJS.write(tiebaCookieKey, process.env.BAIDU_TIEBA_COOKIE);
+
 let getTiebaListOptions = {
   url: "https://tieba.baidu.com/mo/q/newmoindex",
   headers: {
@@ -122,7 +125,7 @@ function TiebaCheckIn(cookie, tbs, tieba) {
       magicJS.notify(`❌获取贴吧Cookie出现异常！！`);
     }
   } else {
-    let cookie = process.env.BAIDU_TIEBA_COOKIE;
+    let cookie = magicJS.read(tiebaCookieKey);
     let content = "🥺很遗憾，以下贴吧签到失败：";
     if (!!cookie === false) {
       magicJS.notify("❓请先获取有效的贴吧Cookie！！");
