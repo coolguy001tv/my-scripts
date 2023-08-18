@@ -37,6 +37,7 @@ const urlSchema = `openjd://virtual?params=%7B%20%22category%22:%20%22jump%22,%2
 const delay = process.env.FRUIT_DELAY || 10000;
 const ua = require('./USER_AGENTS');
 const fs = require('fs');
+const {getNickName} = require('./func');
 let cachecode = [];
 $.reqnum = 1;
 //fs.existsSync('./fruit_helpcode') && (cachecode = JSON.parse(fs.readFileSync('./fruit_helpcode', 'utf8')));
@@ -55,7 +56,7 @@ $.reqnum = 1;
             $.UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
             $.index = i + 1;
             $.isLogin = true;
-            $.nickName = '';
+            $.nickName = getNickName($.UserName);
             await TotalBean();
 
             console.log(`开始【京东账号${$.index}】${$.nickName || $.UserName}\n`);
