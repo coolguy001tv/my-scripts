@@ -10,6 +10,14 @@ const $ = new Env('京东特价版任务');
 const notify = $.isNode() ? require('./sendNotify') : '';
 //Node.js用户请在jdCookie.js处填写京东ck;
 const jdCookieNode = $.isNode() ? require('./jdCookie.js') : '';
+const {getNickName} = require('./func');
+
+function formatName(cookie){
+  const userName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]);
+  const nickName = getNickName(userName);
+  const showName = nickName || userName;
+  return showName
+}
 
 let maxThread = 5; //并发数
 if ($.isNode() && process.env.JDSPEED_MAXTHREAD){
@@ -125,7 +133,7 @@ async function jdGlobal(cookie,url_uuid) {
 }
 
 async function orderReward(type, cookie) {
-  var UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1]);
+  var UserName = formatName(cookie);
   var t = +new Date()
   var headers = {
     'Host': 'api.m.jd.com',
@@ -220,7 +228,7 @@ async function taskList(cookie,url_uuid) {
                     }
                   }
                 } else {
-                  var UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
+                  var UserName = formatName(cookie);
                   console.log(`${UserName}:${task.taskInfo.mainTitle}已完成`)
                 }
 
@@ -250,7 +258,7 @@ async function doTask(taskId, cookie,url_uuid) {
           console.log(`doTask API请求失败，请检查网路重试`)
           llAPIError = true;
         } else {
-          var UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
+          var UserName = formatName(cookie);
           if (safeGet(data)) {
             data = JSON.parse(data);
             if (data.code === 0) {
@@ -309,7 +317,7 @@ async function rewardTask(id, taskId, cookie,url_uuid) {
         } else {
           if (safeGet(data)) {
             data = JSON.parse(data);
-            var UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
+            var UserName = formatName(cookie);
             if (data.code === 0) {
               console.log(`${UserName}:气泡收取成功，获得${data.data.reward}金币`)
             } else {
@@ -345,7 +353,7 @@ async function queryItem(cookie,url_uuid, activeType = 1) {
             if (data.code === 0 && data.data) {
               await startItem(data.data.nextResource, activeType,cookie,url_uuid)
             } else {
-              var UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
+              var UserName = formatName(cookie);
               console.log(`${UserName}:商品任务开启失败，${data.message}`)
               $.canStartNewItem = false
             }
@@ -373,7 +381,7 @@ async function startItem(activeId, activeType, cookie,url_uuid) {
       }
     }), async (err, resp, data) => {
       try {
-        var UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
+        var UserName = formatName(cookie);
         if (err) {
           console.log(`${JSON.stringify(err)}`)
           console.log(`startItem API请求失败，请检查网路重试`)
@@ -437,7 +445,7 @@ async function endItem(uuid, activeType, cookie,url_uuid, activeId = "", videoTi
               if (data.code === 0 && data.isSuccess) {
                 await rewardItem(uuid, activeType, cookie,url_uuid, activeId, videoTimeLength)
               } else {
-                var UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
+                var UserName = formatName(cookie);
                 console.log(`${UserName}:${$.taskName}任务结束失败，${data.message}`)
               }
             }
@@ -473,7 +481,7 @@ async function rewardItem(uuid, activeType, cookie,url_uuid, activeId = "", vide
           } else {
             if (safeGet(data)) {
               data = JSON.parse(data);
-              var UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
+              var UserName = formatName(cookie);
               if (data.code === 0 && data.isSuccess) {
                 console.log(`${UserName}:${$.taskName}任务完成，获得${data.data.reward}金币`)
               } else {
@@ -506,7 +514,7 @@ function wheelsHome(cookie) {
             if (safeGet(data)) {
               data = JSON.parse(data);
               if (data.code === 0) {
-                var UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
+                var UserName = formatName(cookie);
                 console.log(`${UserName}:【幸运大转盘】剩余抽奖机会：${data.data.lotteryChances}`)
                 while (data.data.lotteryChances--) {
                   await wheelsLottery(cookie)
@@ -536,7 +544,7 @@ function wheelsLottery(cookie) {
           } else {
             if (safeGet(data)) {
               data = JSON.parse(data);
-              var UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
+              var UserName = formatName(cookie);
               if (data.data && data.data.rewardType) {
                 console.log(`${UserName}:幸运大转盘抽奖获得：【${data.data.couponUsedValue}-${data.data.rewardValue}${data.data.couponDesc}】\n`)
               } else {
@@ -566,7 +574,7 @@ function apTaskList(cookie) {
             if (safeGet(data)) {
               data = JSON.parse(data);
               if (data.code === 0) {
-                var UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
+                var UserName = formatName(cookie);
                 for (var task of data.data) {
                   // {"linkId":"toxw9c5sy9xllGBr3QFdYg","taskType":"SIGN","taskId":67,"channel":4}
                   if (!task.taskFinished && ['SIGN', 'BROWSE_CHANNEL'].includes(task.taskType)) {
@@ -600,7 +608,7 @@ function apDoTask(taskType, taskId, channel, itemId, cookie) {
             if (safeGet(data)) {
               data = JSON.parse(data);
               if (data.code === 0 && data.data && data.data.finished) {
-                var UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
+                var UserName = formatName(cookie);
                 console.log(`${UserName}:任务完成成功`)
               } else {
                 console.log(JSON.stringify(data))
@@ -691,7 +699,7 @@ function randomString(e) {
 }
 
 function isLoginByX1a0He(cookie) {
-	var UserName = decodeURIComponent(cookie.match(/pt_pin=([^; ]+)(?=;?)/) && cookie.match(/pt_pin=([^; ]+)(?=;?)/)[1])
+  var UserName = formatName(cookie);
     return new Promise((resolve) => {
         const options = {
             url: 'https://plogin.m.jd.com/cgi-bin/ml/islogin',
